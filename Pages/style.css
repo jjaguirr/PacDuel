@@ -1,0 +1,54 @@
+body{
+background-color:#000000;
+}
+h1{
+	font-family:'Raleway',bold;
+	color:white;
+}
+input{
+	font-family:'Raleway',regular;
+}
+
+.login-header{
+	margin-top:100px;
+	font-family:'PacFont',regular;
+	color:white;
+	text-align:center;
+}
+#signup-button{
+	color:white;
+	font-family:'Raleway',regular;
+}
+.login-btn{
+	font-family:'PacFont',regular;
+	font-size:30px;
+	
+	text-align: center;
+	background-color:#FEE148;
+	color:black;
+}
+.navbar-brand{
+color:#ffffff;
+text-shadow:
+		-0.5px -0.5px 0 #000,
+		0.5px -0.5px 0 #000,
+		-0.5px 0.5px 0 #000,
+		0.5px 0.5px 0 #000;
+font-family: 'PacFont', regular;
+
+
+}
+.nav-link{
+	color:#ffffff;
+	font-family:'Raleway',bold;
+}
+.nav-link:hover{
+	color:#FEE148;
+}
+.navbar-brand:hover{
+	color:#FEE148;
+}
+.navbar-custom{
+	outline:1px solid white;
+	margin-bottom:25px
+}
