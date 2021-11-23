@@ -4,7 +4,7 @@ require 'config.php';
 
 if( isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
 
-	header('Location: home.php');
+	header('Location: friends.php');
 }
 else {
 
@@ -29,8 +29,8 @@ else {
 			$passwordInput = hash("sha256",$_POST["password"]);
 
 		
-			$sql = "SELECT * FROM profiles
-			WHERE email = '" . $emailInput . "' AND password= '". $passwordInput."';";
+			$sql = "SELECT * FROM UserInfo
+			WHERE email = '" . $emailInput . "' AND passcode= '". $passwordInput."';";
 			
 
 			
@@ -45,11 +45,10 @@ else {
 			$_SESSION['firstname'] = $row["firstname"];
 			$_SESSION['id']=$row["id"];
 			$_SESSION['lastname']=$row["lastname"];
-			$_SESSION['events_organized']=$row["events_organized"];
-			$_SESSION['university']=$row["university_id"];
+			
 			}
 			
-			header('Location: ./home.php');
+			header('Location: ./friends.php');
 			}
 			else {
 			$error = "Invalid email or password";
