@@ -1,27 +1,32 @@
 import
 
-import java.io.BufferedReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 
 public class Chat {
-    private int receipent;
-    private ObjectOutputStream pw;
-    private ObjectInputStream is;
-    private BufferedReader br;
+    private final int recipient;
+    private final ObjectOutputStream os;
+    private final BufferedReader br;
     private boolean isOnline;
 
-    public Chat(int rID, ObjectOutputStream pr, ObjectInputStream is){
-        receipent = rID;
-        br= br;
-        pr=pr;
+    public Chat(int rID, ObjectOutputStream os,BufferedReader br){
+        recipient = rID;
+        this.br=br;
+        this.os=os;
     }
     public void SendMessage(String message){
         Message msg= new Message(message, this.receipent);
         try{
-            pw.writeObject(msg);
-        } catch (Exception ignored){
+            os.writeObject(msg);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public String ReadMessage(){
+        try {
+            return br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
