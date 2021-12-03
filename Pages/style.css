@@ -38,6 +38,11 @@ font-family: 'PacFont', regular;
 
 
 }
+.enlarged{
+	width:100px;
+	border-radius: 50%;
+	text-align:center;
+}
 .nav-link{
 	color:#ffffff;
 	font-family:'Raleway',bold;
@@ -51,4 +56,31 @@ font-family: 'PacFont', regular;
 .navbar-custom{
 	outline:1px solid white;
 	margin-bottom:25px
+}
+.profpic{
+	width:20px;
+	border-radius: 50%;
+}
+.prof{
+	text-align:center;
+}
+.red{
+	background-color:red;
+	stroke:none;
+	color:white;
+}
+.white{
+	color:white;
+}
+.mid{
+	text-align:center
+}
+.green{
+	color:green;
+}
+.red_text{
+	color:red;
+}
+.hidden{
+	visibility:none;
 }

@@ -5,24 +5,34 @@
     echo $mysqli->connect_error;
     exit();
   }
-  $sql_registered = "SELECT * FROM UserInfo
-  WHERE email = '".$_POST["email"]."';";
+  $sql_registered = "SELECT * FROM UserInfo WHERE username ='".$_POST["username"]."';";
   $results_registered = $mysqli->query($sql_registered);
   if(!$results_registered){
     echo $mysqli->error;
     exit();
   }
   if($results_registered->num_rows > 0){
-    $error = "Email has been already taken. Please choose another one.";
+    $error = "Username has been already taken. Please choose another one.";
     $mysqli->close();
   }
   else{
-  $
+
   $pass=hash("sha256",$_POST["password"]);
-  $sql_prepared = "INSERT INTO profiles(firstname, lastname, email, password)
-    VALUES(?, ?, ?, ?);";
-    $statement=$mysqli->prepare($sql_prepared);
-    $statement->bind_param("ssss", $_POST["firstname"], $_POST["lastname"] $_POST["email"], $pass);
+  $image=strval(rand(1,6));
+  $friends=0;
+  $sql_prepared1="INSERT INTO Friends(username,numfriends)
+  VALUES(?,?);";
+  $statement=$mysqli->prepare($sql_prepared1);
+  $statement->bind_param("si", $_POST["username"],$friends);
+
+  $executed=$statement->execute();
+  if(!$executed) {
+      echo $mysqli->error;
+  }
+  $sql_prepared2 = "INSERT INTO UserInfo(username, passcode, profimage)
+  VALUES(?, ?, ?);";
+  $statement=$mysqli->prepare($sql_prepared2);
+  $statement->bind_param("sss", $_POST["username"], $pass,$image);
 
   $executed=$statement->execute();
   if(!$executed) {
@@ -32,7 +42,8 @@
 
 }
 
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html>
 <head>
 	<title>Sign Up Confirmation - PacDuel</title>
@@ -44,21 +55,22 @@
 </head>
 <body>
 <?php include 'nav.php'; ?>
-  <div class="container">
+  <div class="container mid">
     
     <h1 class="login-header">Sign Up</h1>
     
-  </div> 
-  <div class="row mb-3">
+
+  
   <?php if(isset($error) && !empty($error)):?>
     <p class="text-danger text-center"><?php echo $error;?></p>
-    <div class="text-center" >
+    <div class="mid" >
     <a href="signup.php"><button class="btn btn-primary mx-auto" id="view-event">Try again</button></a>
   </div>
   <?php else:?>
+  <div class="mid">
     <p class="text-success text-center">Account Successfully Created</p>
-  
-  <div class="text-center" >
+  </div>
+  <div class="mid">
     <a href="login.php"><button class="btn btn-primary mx-auto" id="view-event">Log in</button></a>
   </div>
   <?php endif;?>

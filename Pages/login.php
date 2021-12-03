@@ -4,16 +4,16 @@ require 'config.php';
 
 if( isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
 
-	header('Location: friends.php');
+	header('Location: home.php');
 }
 else {
 
-	if( isset($_POST['email']) && isset($_POST['password']) ){
+	if( isset($_POST['username']) && isset($_POST['password']) ){
 		
-		if( empty($_POST['email']) || empty($_POST['password']) ) {
+		if( empty($_POST['username']) || empty($_POST['password']) ) {
 
 
-			$error = "Please enter a email and password ";
+			$error = "Please enter a username and password ";
 		}
 		
 		else {
@@ -24,13 +24,13 @@ else {
 				exit();
 			}
 
-			$emailInput = $_POST["email"];
+			$emailInput = $_POST["username"];
 			
 			$passwordInput = hash("sha256",$_POST["password"]);
 
 		
 			$sql = "SELECT * FROM UserInfo
-			WHERE email = '" . $emailInput . "' AND passcode= '". $passwordInput."';";
+			WHERE username = '" . $emailInput . "' AND passcode= '". $passwordInput."';";
 			
 
 			
@@ -42,16 +42,15 @@ else {
 			if($results->num_rows > 0){
 			$_SESSION['logged_in'] = true;
 			while($row=$results->fetch_assoc()){
-			$_SESSION['firstname'] = $row["firstname"];
-			$_SESSION['id']=$row["id"];
-			$_SESSION['lastname']=$row["lastname"];
+			$_SESSION['username'] = $row["username"];
+			$_SESSION['profimage']=$row["profimage"];
 			
 			}
 			
-			header('Location: ./friends.php');
+			header('Location: home.php');
 			}
 			else {
-			$error = "Invalid email or password";
+			$error = "Invalid username or password";
 			}
 	}
 }
@@ -82,8 +81,8 @@ else {
 				</div>
 			</div>
 				<div class="form-group">
-					<input type="text" class="form-control" id="email-id" name="email" placeholder="email">
-					<small id="email-error" class="invalid-feedback">Email is required.</small>
+					<input type="text" class="form-control" id="username-id" name="username" placeholder="username">
+					<small id="username-error" class="invalid-feedback">Username is required.</small>
 				</div>
 			
 
@@ -104,10 +103,10 @@ else {
 <script>
 			
 	document.querySelector('form').onsubmit = function(){
-	if ( document.querySelector('#email-id').value.trim().length == 0 ) {
-		document.querySelector('#email-id').classList.add('is-invalid');
+	if ( document.querySelector('#username-id').value.trim().length == 0 ) {
+		document.querySelector('#username-id').classList.add('is-invalid');
 	} else {
-		document.querySelector('#email-id').classList.remove('is-invalid');
+		document.querySelector('#username-id').classList.remove('is-invalid');
 	}
 
 	if ( document.querySelector('#password-id').value.trim().length == 0 ) {
