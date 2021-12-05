@@ -3,11 +3,11 @@ import java.io.Serializable;
 
 public class Message implements Serializable{
     String msg;
-    int rID;
-
-    public Message (String msg, int Rid){
+    int rID, sID;
+    public Message (String msg, int Rid, int sID){
         this.msg=msg;
         rID=Rid;
+        this.sID=sID;
     }
 
     public String getMsg() {
