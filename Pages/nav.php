@@ -7,7 +7,7 @@
       </li>
       </ul>
     <?php else : ?>
-    	<div class="p-2 ml-auto"><a href="profile.php?name=<?php echo $_SESSION['firstname']. '_' . $_SESSION['lastname']?>" id="greeting"><?php echo $_SESSION["firstname"]?>!</a></div>
+    	<div class="p-2 ml-auto"><a href="profile.php?name=<?php echo $_SESSION['username']?>" id="prof_link"><?php echo $_SESSION["username"]?></a></div>
 
 		<a class="p-2" href="logout.php">Logout</a>
   <?php endif;?>
