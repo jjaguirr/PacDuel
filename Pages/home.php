@@ -8,7 +8,7 @@ if( !isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 else{
 
 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-$sql="SELECT * FROM Friends WHERE username='".$_SESSION['username']."';";
+$sql="SELECT UserInfo.username, UserInfo.profimage FROM Friends INNER JOIN UserInfo ON(Friends.friend1=UserInfo.sno) WHERE Friends.sno=".$_SESSION['sno'].";";
 $results=$mysqli->query($sql);
 if(!$results){
 	echo $mysqli->connect_error;
@@ -25,6 +25,7 @@ $mysqli->close();
 	<link href="style.css" rel="stylesheet">
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://kit.fontawesome.com/8a47b2dc26.js" crossorigin="anonymous"></script>
 </head>
 <body>
 	<?php include 'nav.php'; ?>
@@ -33,24 +34,27 @@ $mysqli->close();
         <div class="form-group">
   	    <input class="form-control mr-sm-2" type="text" placeholder="Add a Friend..." aria-label="Search" name="search_query">
         <button class="btn btn-primary" type="submit">Search</button>
-        </form>
-        <?php if(!$results || empty($results)):?>
-        <h2 class="white">No Friends yet!</h2>
-        <?php else:?>
-        <?php while($row=$results->fetch_assoc()):?>
-            <!-- figure out how to go thru friends -->
-        <?php if($row['username']!=$_SESSION['username']):?>
+</div>
+    </form>
+    <?php if(!$results || empty($results)):?>
+    <h2 class="white">No Friends yet!</h2>
+    <?php else:?>
         
-            <div class="row">
-	    <img src="prof_pictures/<?php echo $row['profimage']; ?>.jpg" class="profpic">
-        <h3><?php echo $row['username']?></h3>
-        <!-- icons -->
-        <!-- delete friends -->
-        </div>
-        <?php endif;?>
-        <?php endwhile?>
-        <?php endif;?>
+    <?php while($row=$results->fetch_assoc()):?>
     
-        </div>
+    <div class="row userrow">
+    <img src="prof_pictures/<?php echo $row['profimage']; ?>.jpg" class="profpic">
+    <h3 class="white"><?php echo $row['username']?></h3>
+    <i class="far fa-comment-alt white"></i>
+    <a href="play.php"><i class="fas fa-play white icon"></i></a>
+    <form action="delete_friend.php" method="POST">
+    <input type="hidden" name="friend" value="<?php echo $row['username']?>">
+    <button type="submit"><i class="fas fa-times white icon"></i></button>
+    </form>
+    </div>
+    <?php endwhile?>
+    <?php endif;?>
+
+    </div>
 </body>
 </html>

@@ -44,6 +44,7 @@ else {
 			while($row=$results->fetch_assoc()){
 			$_SESSION['username'] = $row["username"];
 			$_SESSION['profimage']=$row["profimage"];
+			$_SESSION['sno']=$row['sno'];
 			
 			}
 			

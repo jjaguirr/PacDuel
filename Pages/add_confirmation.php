@@ -8,17 +8,23 @@ if(!$_POST["friend"]||empty($_POST["friend"])){
 }
 else{
     $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    $sql="SELECT numfriends FROM Friends WHERE username='".$_SESSION['username']."';";
-    $numuserfriends=intval($mysqli->query($sql));
+    $sql="SELECT numfriends FROM Friends WHERE sno=".$_SESSION['sno'].";";
+    $numuserfriends1=intval($mysqli->query($sql))+1;
+    $findsql = "SELECT sno FROM UserInfo WHERE username='".$_POST["friend"]."';";
+    $sno=intval($mysqli->query($findsql));
     // check if already friends/if need to add columns
-    $sql="UPDATE Friends SET numfriends=".($numuserfriends+1).", friend".($numuserfriends+1)."='".$_POST["friend"]."' WHERE username='". $_SESSION['username']."';";
+    $sql="UPDATE Friends SET numfriends=".($numuserfriends1).", friend".($numuserfriends1)."=".$sno." WHERE sno=". $_SESSION['sno'].";";
     $executed=$mysqli->query($sql);
     if(!$executed) {
         echo $mysqli->error;
     }
-    $sql="SELECT numfriends FROM Friends WHERE username='".$_POST['friend']."';";
-    $numuserfriends=intval($mysqli->query($sql));
-    $sql="UPDATE Friends SET numfriends=".($numuserfriends+1).", friend".($numuserfriends+1)."='".$_SESSION["username"]."' WHERE username='". $POST['friend']."';";
+    $sql="SELECT numfriends FROM Friends WHERE sno=".$sno.";";
+    $numuserfriends2=intval($mysqli->query($sql))+1;
+    $sql="UPDATE Friends SET numfriends=".($numuserfriends2).", friend".($numuserfriends2)."='".$_SESSION["sno"]."' WHERE sno=". $sno.";";
+    $executed=$mysqli->query($sql);
+    if(!$executed) {
+        echo $mysqli->error;
+    }
     $mysqli->close();
 }
 
@@ -35,6 +41,7 @@ else{
 <body>
 <?php include 'nav.php'?>
 <?php if($success):?>
+    <?php echo $findsql. $sno?>
 <h3 class="green">Friend Successfully Added</h3>
 
 <?php else:?>

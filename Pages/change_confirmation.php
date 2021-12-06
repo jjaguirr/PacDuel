@@ -8,18 +8,13 @@ if(!$_POST["username"]|empty($_POST["username"])){
 }
 else{
     $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    //check if username is in use
-
-    $sql="UPDATE UserInfo VALUES username='".$_POST['username']."' WHERE username=".$_SESSION['username'].";";
+    $sql="UPDATE UserInfo SET username='".$_POST['username']."' WHERE sno=".$_SESSION['sno'].";";
     $executed=$mysqli->query($sql);
     if(!$executed) {
         echo $mysqli->error;
     }
-    $sql="UPDATE Friends VALUES username='".$_POST['username']."' WHERE username=".$_SESSION['username'].";";
-    $executed=$mysqli->query($sql);
-    if(!$executed) {
-        echo $mysqli->error;
-    }
+    
+    $_SESSION["username"]=$_POST['username'];
 }
 
 ?>

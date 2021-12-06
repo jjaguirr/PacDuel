@@ -58,8 +58,17 @@ font-family: 'PacFont', regular;
 	margin-bottom:25px
 }
 .profpic{
-	width:20px;
+	width:50px;
+	margin-right:20px;
+	position:relative;
+	top:-10px;
 	border-radius: 50%;
+}
+.user{
+	margin-top:40px;
+}
+.username{
+	margin-right:10px;
 }
 .prof{
 	text-align:center;
@@ -82,5 +91,25 @@ font-family: 'PacFont', regular;
 	color:red;
 }
 .hidden{
-	visibility:none;
+	visibility:hidden;
+}
+#pacman {
+	height: 470px;
+	width: 382px;
+	border-radius: 5px;
+	margin: 20px auto;
+  }
+#result{
+	display:none;
+}
+.icon{
+	margin-left:15px;
+	margin-right:15px;
+}
+.userrow{
+	margin-top:20px;
+}
+.fas{
+	border:none;
+	background-color:black;
 }

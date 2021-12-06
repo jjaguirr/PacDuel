@@ -1,9 +1,5 @@
 <?php
 require 'config.php';
-if( !isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
-
-header('Location: login.php');
-}
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +17,7 @@ header('Location: login.php');
 <img src="prof_pictures/<?php echo $_SESSION['profimage']?>.jpg" class="enlarged">
 <h1 id="prof_username"><?php echo $_SESSION['username']?></h1>
 <a href="change_username.php"?><button class="btn btn-primary">Change Username</button></a>
-<a href="change_username.php"?><button class="red btn ">Delete Account</button></a>
+<a href="delete_account.php"?><button class="red btn ">Delete Account</button></a>
 <!-- add javascript for changing & deleting -->
 </div>
 </body>

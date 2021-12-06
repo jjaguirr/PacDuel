@@ -19,25 +19,25 @@
 
   $pass=hash("sha256",$_POST["password"]);
   $image=strval(rand(1,6));
-  $friends=0;
-  $sql_prepared1="INSERT INTO Friends(username,numfriends)
-  VALUES(?,?);";
-  $statement=$mysqli->prepare($sql_prepared1);
-  $statement->bind_param("si", $_POST["username"],$friends);
-
-  $executed=$statement->execute();
-  if(!$executed) {
-      echo $mysqli->error;
-  }
   $sql_prepared2 = "INSERT INTO UserInfo(username, passcode, profimage)
   VALUES(?, ?, ?);";
   $statement=$mysqli->prepare($sql_prepared2);
   $statement->bind_param("sss", $_POST["username"], $pass,$image);
 
   $executed=$statement->execute();
-  if(!$executed) {
-      echo $mysqli->error;
-    }
+
+  $friends=0;
+  $sql_prepared1="INSERT INTO Friends(numfriends)
+  VALUES(?);";
+  $statement=$mysqli->prepare($sql_prepared1);
+  $statement->bind_param("i",$friends);
+
+  $executed=$statement->execute();
+  // if(!$executed) {
+  //     echo $mysqli->error;
+  // }
+  
+  
   $mysqli->close();
 
 }
@@ -54,7 +54,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-<?php include 'nav.php'; ?>
   <div class="container mid">
     
     <h1 class="login-header">Sign Up</h1>
