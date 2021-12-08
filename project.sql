@@ -1,14 +1,17 @@
 DROP TABLE IF EXISTS Friends;
-DROP TABLE IF EXISTS LeaderBoard;
 DROP TABLE IF EXISTS UserInfo;
 
 CREATE TABLE UserInfo (
 	sno int NOT NULL AUTO_INCREMENT,
-    games_queued VARCHAR(64) DEFAULT "",
     username VARCHAR(15) NOT NULL UNIQUE,
     passcode VARCHAR(64) NOT NULL,
     profimage VARCHAR(25) NOT NULL,
     high_score int DEFAULT 0,
+    game1 int DEFAULT 0,
+    game2 int DEFAULT 0,
+    game3 int DEFAULT 0,
+    game4 int DEFAULT 0,
+    game5 int DEFAULT 0,
     PRIMARY KEY (sno)
 );
 

@@ -865,7 +865,7 @@ var PACMAN = (function () {
             var el=document.getElementById("pacman");
             el.remove();
             document.getElementById("result").style.display="block";
-            document.getElementById("score").setAttribute(value,toString(user.theScore()));
+            document.getElementById("score").setAttribute("value",user.theScore());
         }
     }
 
