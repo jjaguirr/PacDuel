@@ -3,12 +3,13 @@ import java.util.ArrayList;
 import java.net.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Server {
     static int nClients = 0;
     static ArrayList<ServerThread> serverThreads = new ArrayList<ServerThread>();
-    static ConcurrentLinkedQueue<Message> unsentMessages = new ConcurrentLinkedQueue<Message>();
+    static ConcurrentLinkedQueue<Message> undisplayedMessages = new ConcurrentLinkedQueue<Message>();
 
     public static void main(String[] args) {
         //we start the server
@@ -16,7 +17,7 @@ public class Server {
             ServerSocket ss = new ServerSocket(3456);
             while (true) {
                 Socket connection = ss.accept();
-                System.out.println("New client request received : " + connection.getInetAddress());
+                System.out.println("New chat request received : " + connection.getInetAddress());
                 nClients++;
                 ServerThread st = new ServerThread(connection);
                 serverThreads.add(st);
@@ -30,76 +31,76 @@ public class Server {
     static class ServerThread extends Thread {
         final BufferedReader br;
         final PrintWriter pw;
-        private ObjectInputStream is;
-        private ObjectOutputStream os;
         int UserID;
-        public boolean isOnline;
+        int chattingWith;
 
         public ServerThread(Socket s) throws IOException {
-            is = new ObjectInputStream(s.getInputStream());
             br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            os = new ObjectOutputStream(s.getOutputStream());
             pw = new PrintWriter(s.getOutputStream(), true);
             start();
         }
         public int getUserID(){return UserID;}
         @Override
         public void run() {
+            //read this user id
             try {
-                String received = br.readLine();
-                this.UserID = Integer.parseInt(received);
+                String userID = br.readLine();
+                this.UserID = Integer.parseInt(userID);
                 System.out.println("User " + UserID + " Connected");
-            } catch (IOException e) {
+            } catch (IOException | NumberFormatException e) {
                 e.printStackTrace();
             }
-//            //Find if any msg not delivered belongs to this user.
-//            try {
-//                for (Message m: unsentMessages){
-//                    if (this.UserID==m.rID);
-//
-//                }
-//            } catch (Exception e) {e.printStackTrace();};
-
-            try {
-                //start reading client options, should implement with GUI instead of console input.
-
-                while (true) { //stops when user quits game. GUI implementation.
-                    String option = br.readLine();
-                    if (option.equals("chat")) { //if user clicked on chat. GUI.
-                        while (true) {
-                            //this server thread will send a message to someone
-                            Message msg = (Message) is.readObject();
-                            //the msg object has a recipient.
-                            for (ServerThread st : serverThreads) {
-                                //find the recipient if connected and send it.
-                                if (st.getUserID() == msg.rID) {
-                                    //the client side decides how to display each message
-                                    st.pw.println(this.UserID + ": " + msg.msg);
-                                } else { //not connected
-                                    unsentMessages.add(msg);
-                                }
-                            }
+            while (true) {
+                //reads the recipient id and find the thread if exists
+                ServerThread receiver = null;
+                int rID = 0;
+                try {
+                    String option= br.readLine();
+                    if (option.equals("quit")) break;
+                    rID = Integer.parseInt(br.readLine());
+                    for (ServerThread st : serverThreads) {
+                        if (st.getUserID() == rID) {
+                            receiver = st;
                         }
-                    } else if (option.equals("game")) {
-                        //send invitation to player 2.
-                        //run game (player 1, player 2)
-                        //read score from API
-                        //Send p1 score to p2, and viceversa.
-                        //wait for someone to loose and communicate the other that they won.
+                    }
+                } catch (NumberFormatException | IOException e) {
+                    System.out.println("Incorrect recipient format");
+                    e.printStackTrace();
+                    break;
+                }
+                //find if the receiver have sent msgs to this user and send them.
+                for (Message msg: undisplayedMessages){
+                    if (msg.sID==rID && msg.rID==this.UserID) {
+                        this.pw.println(msg.msg);
+                        undisplayedMessages.remove(msg);
                     }
                 }
-            } catch (IOException | ClassNotFoundException ignored) {
-            } finally {
+                this.chattingWith=rID;
+                //start chatting
                 try {
-                    is.close();
-                    br.close();
-                    os.close();
-                    pw.close();
+                    while (true) {
+                        String msg = br.readLine();
+                        if (msg.equals("user disconnected")) break;
+                        //if the receiver is disconnected or chatting with someone else
+                        if (receiver == null || receiver.chattingWith!=this.UserID) {
+                            //add the msg to undisplayed for receiver.
+                            undisplayedMessages.add(new Message(msg, rID, this.UserID));
+                            continue;
+                        } //else just display it to they
+                        receiver.pw.println(msg);
+                    }
+                    this.chattingWith=-1;
+                    // TODO: 12/7/2021 Find out how does the client quits so the server can end thread.
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
+            }
+            try {
+                System.out.println("User " + this.getUserID() + " disconnected. Closing resources.");
+                this.br.close();
+                this.pw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 

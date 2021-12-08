@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
-    volatile static boolean isChatTerminated, isGameTerminated;
+    volatile static boolean isChatTerminated;
     volatile static int ID;
     //static ArrayList<Message> unreadMessages = new ArrayList<Message>();
     //Here we run the game, and click on chat
@@ -15,42 +15,36 @@ public class Client {
     //
     public static void main(String[] arg) {
         //connect and set streams
+        BufferedReader br=null;
+        PrintWriter pw=null;
+        Socket s=null;
         try {
-            Socket s = new Socket("127.0.0.1", 3456);
-            //ObjectInputStream is = new ObjectInputStream(s.getInputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            ObjectOutputStream os = new ObjectOutputStream(s.getOutputStream());
-            PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
+            s = new Socket("127.0.0.1", 3456);
+            br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            pw = new PrintWriter(s.getOutputStream(), true);
             Scanner scanner = new Scanner(System.in);
             System.out.println("Connected to server. \n What's your ID? ");
-            ID= Integer.parseInt(scanner.nextLine());
+            ID = Integer.parseInt(scanner.nextLine());
             pw.println(String.valueOf(ID));
             while (true) {
                 String option = scanner.nextLine();
                 pw.println(option);
-                //selected chat from gui
                 if (option.equals("chat")) { //if click on "chat"
                     //select user and get id
                     System.out.print("Receipent ID: ");
                     int RiD = Integer.parseInt(scanner.nextLine());
-                    RunChat(RiD, os, br, scanner);
+                    pw.println(RiD);
+                    RunChat(RiD, pw, br, scanner);
                 }
-                else if(option.equals("game")){
-                    int otherPlayerID= 1;
-                    //click in other player and wait for confirmation
-                    RunGame(otherPlayerID, os, br);
-                }
-                //other functionality, game, exit, etc, all from the GUI
+                if (option.equals("quit")) break;
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
-            //Close resources and socket
+            //close resources
         }
-
-
     }
-    public static void RunChat(int rID, ObjectOutputStream os, BufferedReader br, Scanner scanner) throws InterruptedException {
+    public static void RunChat(int rID, PrintWriter pw, BufferedReader br, Scanner scanner) throws InterruptedException {
         isChatTerminated=false;
         Thread sendMessage = new Thread(new Runnable() {
             @Override
@@ -58,14 +52,9 @@ public class Client {
                 while (!isChatTerminated) {
                     // read the message to deliver.
                     String msg = scanner.nextLine();
-                    try {
-                        // write on the output stream
-                        if (msg.equals("end")) {isChatTerminated=true; os.writeObject(new Message(msg, rID, ID)); break;}
-                        os.writeObject(new Message(msg, rID, ID));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        break;
-                    }
+                    if (msg.equals("user disconnected")) {isChatTerminated = true;}
+                    // write on the output stream
+                    pw.println(msg);
                 }
             }
         });
@@ -76,10 +65,6 @@ public class Client {
                 while (!isChatTerminated) {
                     try {
                         String msg = br.readLine();
-                        //if(isChatTerminated)
-                        //save them into a buffer, only when selecting a chat, all
-                        //unread messages should be displayed.
-                        if (msg.equals("end")) {isChatTerminated = true;}
                         System.out.println(msg);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -91,18 +76,7 @@ public class Client {
         sendMessage.start();
         readMessage.start();
         sendMessage.join();
-        readMessage.join();
+        readMessage.interrupt();
         System.out.println("Chat Terminated");
-    }
-    public static void RunGame(int otherPlayerID, ObjectOutputStream os, BufferedReader br) throws InterruptedException{
-        isGameTerminated=false;
-        try{
-            while (!isGameTerminated){
-                //Continually read other player score and display it to GUI
-                int p2Score = Integer.parseInt(br.readLine());
-                //display p2SCore to GUI
-                //wait for termination
-            }
-        } catch (IOException e){ e.printStackTrace();}
     }
 }
