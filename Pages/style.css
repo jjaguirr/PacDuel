@@ -124,7 +124,7 @@ font-family: 'PacFont', regular;
 }
 #messagebox{
 	position:absolute;
-	bottom:0;
+	bottom:20px;
 	width:500px;
 }
 .nod{
@@ -137,4 +137,8 @@ font-family: 'PacFont', regular;
 .incoming_message{
 	text-align: left;
 	color:white;
+}
+.endchat{
+	position:absolute;
+	bottom:0;
 }
