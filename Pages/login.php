@@ -28,12 +28,9 @@ else {
 			
 			$passwordInput = hash("sha256",$_POST["password"]);
 
-		
+
 			$sql = "SELECT * FROM UserInfo
 			WHERE username = '" . $emailInput . "' AND passcode= '". $passwordInput."';";
-			
-
-			
 			$results = $mysqli->query($sql);
 			if(!$results){
 				echo $mysqli->error;

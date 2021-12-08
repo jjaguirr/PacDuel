@@ -42,6 +42,10 @@ $mysqli->close();
 <hr class="my4">
 <?php endwhile?>
 <?php endif;?>
+
+<div class="col text-center">
+				<a href="home.php" class="btn btn-primary" id="home-button">Home</a>
+		</div>
 </div>
 </body>
 </html>

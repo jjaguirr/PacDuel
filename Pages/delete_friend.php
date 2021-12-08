@@ -4,15 +4,88 @@
 
         header('Location: login.php');
     }
+    if(!isset($_POST['friend'])||!$_POST['friend']){
+        header('Location: home.php');
+    }
     else{
+    $friend=intval($_POST['friend']);
     $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    //find friend and delete them
-    $executed=$mysqli->query($sql);
-    $success=true;
+    //remove from user's list
+    $sql1="SELECT * FROM Friends WHERE sno=?;";
+    $statement=$mysqli->prepare($sql1);
+    $statement->bind_param('i',$_SESSION['sno']);
+    $executed=$statement->execute();
     if(!$executed){
-        $success=false;
+        echo "1";
     }
+    $result=$statement->get_result();
+    $row=$result->fetch_assoc();
+    $numfriends1=intval($row["numfriends"]);
+    
+    $found=false;
+    for($i=1;$i<=$numfriends1;$i++){
+        if($found){
+            $removesql="UPDATE Friends SET friend".($i-1)."=? WHERE sno=?;";
+            $statement=$mysqli->prepare($removesql);
+            $statement->bind_param("ii",$row["friend".$i],$_SESSION['sno']);
+            $executed=$statement->execute();
+            if(!$executed){
+                echo "2";
+            }
+            if($i==$numfriends1){
+            $removesql="UPDATE Friends SET friend".($i)."=NULL, numfriends=? WHERE sno=?;";
+            $statement=$mysqli->prepare($removesql);
+            $statement->bind_param("ii",($numfriends1-1),$_SESSION["sno"]);
+            $executed=$statement->execute();
+            if(!$executed){
+                echo "3";
+            }
+            }
+        }
+        else if(intval($friend)==intval($row["friend".$i])){
+            $found=true;
+        }
     }
+        
+    //remove from friend's list
+    $sql2="SELECT * FROM Friends WHERE sno=?;";
+    $statement=$mysqli->prepare($sql2);
+    $statement->bind_param('i',$friend);
+    $executed=$statement->execute();
+    if(!$executed){
+        echo "4";
+    }
+    $result=$statement->get_result();
+    $row=$result->fetch_assoc();
+    $numfriends1=intval($row["numfriends"]);
+    $found=false;
+    for($i=1;$i<=$numfriends1;$i++){
+        if($found){
+            $removesql="UPDATE Friends SET friend".($i-1)."=? WHERE sno=?;";
+            $statement=$mysqli->prepare($removesql);
+            $statement->bind_param("ii",$row["friend".$i],$friend);
+            $executed=$statement->execute();
+            if(!$executed){
+                echo "2";
+            }
+            if($i==$numfriends1){
+            $removesql="UPDATE Friends SET friend".($i)."=NULL, numfriends=? WHERE sno=?;";
+            $statement=$mysqli->prepare($removesql);
+            $statement->bind_param("ii",($numfriends1-1),$_SESSION["sno"]);
+            $executed=$statement->execute();
+            if(!$executed){
+                echo "3";
+            }
+            }
+        }
+        else if(intval($friend)==intval($row["friend".$i])){
+            $found=true;
+        }
+    }
+    //delete games
+}
+
+    
 ?>
 <head>
 	<title>Delete Friend- PacDuel</title>

@@ -1,4 +1,8 @@
 <?php
+require 'config.php';
+if(!isset($_POST['sno'])){
+    header('Location: home.php');
+}
 $host = "localhost";
 $port = 3456;
 
@@ -9,31 +13,20 @@ if ( ($socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === FALSE ) {
     echo "socket_create() failed: reason: " . socket_strerror(socket_last_error());
 }
 else {
-//attempt to connect to the first port
     echo "Attempting to connect to '$host' on port '$port'...<br>";
-//check if other user is already connected
-//server return that someone is already connected to the port
-//check for the message that someone is already connected
     if (($result = socket_connect($socket, $host, $port)) === FALSE) {
         echo "socket_connect() failed. Reason: ($result) " . socket_strerror(socket_last_error($socket));
     }
 }
+$new_messages=array();
 
-$userID=$_POST['friendID'];
-socket_write($socket,$userID."\r\n", strlen ($userID."\r\n"));
-
-$data = readline('Enter your message: ');
-echo "Sending data...<br>";
-socket_write ($socket, $data."\r\n", strlen ($data."\r\n"));
-//in java server, it'll read the what the user sent
-echo "OK<br>";
-
-
-
-echo "Reading response:<br>";
-while ($out = socket_read($socket, 2048)) {
-    echo $out;
+if($_PUSH["outgoing_chat"] && !empty($_PUSH["outgoing_chat"])){
+    array_push($new_messages,"u:".$_PUSH["outgoing_chat"]);
 }
+$userID=$_POST['friend'];
+socket_write($socket,$userID."\r\n", strlen ($userID."\r\n"));
+socket_write($socket,$_SESSION['sno']."\r\n", strlen ($_SESSION['sno']."\r\n"));
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -47,11 +40,46 @@ while ($out = socket_read($socket, 2048)) {
 </head>
 <body>
 	<?php include 'nav.php'; ?>
+<div id="messages">
+<?php foreach($_POST["messages"] as &$message):?>
+    <?php if(substr($message,0,2)=="u:"):?>
+        <div class="outgoing_message"><?php echo substr($message,2);?></div>
+    <?php else:?>
+        <div class="incoming_message"><?php echo substr($message,2);?></div>
+    <?php endif;?>
+    <?php endforeach;?>
+    <?php while ($out = socket_read($socket, 2048)):?>
+    <div class="incoming_message"><?php echo $out;?></div>
+    <?php array_push($new_messages,"f:".$out)?>
+    <?php endwhile;?>
+</div>
+<form action="" method="POST" id="messagebox" onsubmit="addprefix()">
+    <?php foreach($_POST["messages"] as &$message):?>
+    <input type="text" value=$message name="messages[]" class="nod">
+    <?php endforeach;?>
+    <?php foreach($new_messages as &$message):?>
+    <input type="text" value=$message name="messages[]" class="nod">
+    <?php endforeach;?>
 
+    <div class="form-group">
+    <input type="text" class="form-control" placeholder="Text to chat..." name="outgoing_chat" id="outgoing_chat">
+    <button type="submit" class="btn btn-primary" id="submitFormData">Send</button>
+</div>
+<button class="red btn" onclick="closechat()">End Chat</button>
 
+<script>
+function closechat(){
+    <?php 
+    $data="user disconnected";
+    socket_write ($socket, $data."\r\n", strlen ($data."\r\n"));
+    header('Location:home.php');
+    ?>
+}
+function addprefix(){
+    var outgoing_chat=document.getElementById("outgoing_chat").value;
+    document.getElementById("outgoing_chat").setAttribute("value","u:"+outgoing_chat)
 
-
-
-    <input type="text" class="form-control" placeholder="Text to chat..." name="outgoing_chat">
+}
+</script>
 </body>
 </html>
