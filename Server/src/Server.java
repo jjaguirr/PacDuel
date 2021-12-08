@@ -1,15 +1,16 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
-import java.net.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Server {
     static int nClients = 0;
-    static ArrayList<ServerThread> serverThreads = new ArrayList<ServerThread>();
-    static ConcurrentLinkedQueue<Message> undisplayedMessages = new ConcurrentLinkedQueue<Message>();
+    static ArrayList<ServerThread> serverThreads = new ArrayList<>();
+    static ConcurrentLinkedQueue<Message> undisplayedMessages = new ConcurrentLinkedQueue<>();
 
     public static void main(String[] args) {
         //we start the server
@@ -53,7 +54,7 @@ public class Server {
             while (true) {
                 //reads the recipient id and find the thread if exists
                 ServerThread receiver = null;
-                int rID = 0;
+                int rID;
                 try {
                     String option= br.readLine();
                     if (option.equals("quit")) break;
@@ -90,7 +91,6 @@ public class Server {
                         receiver.pw.println(msg);
                     }
                     this.chattingWith=-1;
-                    // TODO: 12/7/2021 Find out how does the client quits so the server can end thread.
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
