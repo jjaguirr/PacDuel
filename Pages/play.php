@@ -28,6 +28,7 @@
 <form  action="game_result.php" method="GET">
     <input type="hidden" id="score" name="score">
     <button type="submit" id="result" class="btn login-btn">View Results</button> 
+    <h3 class="white"id="scoredisplay"></h3>
 </form>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
