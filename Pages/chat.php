@@ -1,14 +1,12 @@
 <?php
 require 'config.php';
-if(!isset($_POST['sno'])){
+if(!$_POST["friend"]){
     header('Location: home.php');
 }
+$friend=intval($_POST["friend"]);
 $host = "localhost";
 $port = 3456;
 
-if(!isset($_POST['friendID']) || empty($_POST['friendID'])){
-    header("home.php");
-}
 if ( ($socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === FALSE ) {
     echo "socket_create() failed: reason: " . socket_strerror(socket_last_error());
 }
@@ -17,15 +15,15 @@ else {
     if (($result = socket_connect($socket, $host, $port)) === FALSE) {
         echo "socket_connect() failed. Reason: ($result) " . socket_strerror(socket_last_error($socket));
     }
-}
+
 $new_messages=array();
 
 if($_PUSH["outgoing_chat"] && !empty($_PUSH["outgoing_chat"])){
     array_push($new_messages,"u:".$_PUSH["outgoing_chat"]);
 }
-$userID=$_POST['friend'];
-socket_write($socket,$userID."\r\n", strlen ($userID."\r\n"));
 socket_write($socket,$_SESSION['sno']."\r\n", strlen ($_SESSION['sno']."\r\n"));
+socket_write($socket,$friend."\r\n", strlen ($friend."\r\n"));
+}
 
 ?>
 <!DOCTYPE html>

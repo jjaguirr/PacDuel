@@ -132,7 +132,9 @@ font-family: 'PacFont', regular;
 }
 .outgoing_message{
 	text-align: right;
+	color:blue;
 }
 .incoming_message{
 	text-align: left;
+	color:white;
 }

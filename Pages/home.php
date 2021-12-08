@@ -46,25 +46,6 @@ $gamerow=$result->fetch_assoc();
 
 $mysqli->close();
 
-//chat functionality
-// $host = "localhost";
-// $port = 3456;
-// if ( ($socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === FALSE ){
-
-//     echo "socket_create() failed: reason: " . socket_strerror(socket_last_error());
-
-// }
-// else
-// {
-//     echo "Attempting to connect to '$host' on port '$port'...<br>";
-//     if ( ($result = socket_connect($socket, $host, $port)) === FALSE ){
-
-//         echo "socket_connect() failed. Reason: ($result) " . socket_strerror(socket_last_error($socket));
-
-//     }
-// }
-// socket_close($socket);
-
 }
 
 ?>
@@ -113,6 +94,20 @@ $mysqli->close();
     <?php endif;?>
     <?php $friendnum++;?>
     <?php endwhile?>
+    <?php
+    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $sql="SELECT UserInfo.username, UserInfo.profimage, UserInfo.sno FROM Friends INNER JOIN UserInfo ON (Friends.friend1=UserInfo.sno";
+    for($i=1;$i<$numuserfriends;$i++){
+        $sql=$sql ." OR Friends.friend".($i+1)."=UserInfo.sno";
+    }
+
+    $sql=$sql.") WHERE Friends.sno=?;";
+    $statement=$mysqli->prepare($sql);
+    $statement->bind_param('i',$_SESSION['sno']);
+    $statement->execute();
+    $results=$statement->get_result();
+    $mysqli->close();?>
+
     <h2 class="white"> Waiting to play...</h2>
     <?php $friendnum=1;?>
     <?php while($row=$results->fetch_assoc()):?>

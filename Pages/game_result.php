@@ -28,7 +28,7 @@ else{
 
     $score=intval($_POST['score']);
     if($score>$high_score){
-        $updatesql="UPDATE UserInfo SET high_score=? WHERE sno=?";
+        $updatesql="UPDATE UserInfo SET high_score=? WHERE sno=?;";
         $statement=$mysqli->prepare($updatesql);
         $statement->bind_param('ii',$score,$_SESSION['sno']);
         $executed=$statement->execute();
@@ -36,21 +36,54 @@ else{
             echo "2";
         }
     }
-
-    $sql1="SELECT game".$friendnum." FROM UserInfo WHERE sno=?;";//something past here
+    $friendnum=$_POST["friendnum"];
+    $sql1="SELECT game".$friendnum." FROM UserInfo WHERE sno=?;";
     $statement=$mysqli->prepare($sql1);
     $statement->bind_param('i',$_SESSION['sno']);
     $executed=$statement->execute();
     if(!$executed){
         echo "3";
     }
+    
     $result=$statement->get_result();
     $row=$result->fetch_assoc();
     $opponentScore=intval($row["game".$friendnum]);
     $outcome="";
-    if($opponentScore=0){
+    $opscore=-$score;
+    if($opponentScore==0){
         $outcome="waiting";
+        $sql= "UPDATE UserInfo SET game".$friendnum."=? WHERE sno=?;";
+        $statement=$mysqli->prepare($sql);
+        $statement->bind_param("ii",$opscore,$_SESSION["sno"]);
+        $executed = $statement->execute();
+        if(!$executed){
+            echo "6";
+        }
         
+        $friendsql="SELECT friend1, friend2, friend3,friend4,friend5 FROM Friends WHERE sno=?;";
+        $statement=$mysqli->prepare($friendsql);
+        $statement->bind_param("i",$opponent);
+        $executed=$statement->execute();
+        if(!$executed){
+            echo "5";
+        }
+        $results=$statement->get_result();
+        $row=$results->fetch_assoc();
+        $userno=0;
+        for($i=1;$i<=5;$i++){
+            $temp = intval($row["friend".$i]);
+            if($temp==$_SESSION["sno"]){
+                $userno=$i;
+            }
+        }
+        $sql= "UPDATE UserInfo SET game".$userno."=? WHERE sno=?;";
+        $statement=$mysqli->prepare($sql);
+        $statement->bind_param("ii",$score,$opponent);
+        $executed = $statement->execute();
+        if(!$executed){
+            echo "6";
+        }
+
     }
     else{
     if($opponentScore>$score){
@@ -59,7 +92,7 @@ else{
 
     else{
        $outcome="win";
-    }
+    }//before this
     $usersql="UPDATE UserInfo SET game".$friendnum."=0 WHERE sno=?;";
     $statement=$mysqli->prepare($usersql);
     $statement->bind_param("i",$_SESSION["sno"]);
@@ -68,7 +101,7 @@ else{
         echo "4";
     }
 
-    $friendsql="SELECT game1, game2, game3,game4,game5 FROM UserInfo WHERE sno=?";
+    $friendsql="SELECT friend1, friend2, friend3,friend4,friend5 FROM Friends WHERE sno=?;";
     $statement=$mysqli->prepare($friendsql);
     $statement->bind_param("i",$opponent);
     $executed=$statement->execute();
@@ -78,8 +111,9 @@ else{
     $results=$statement->get_result();
     $row=$results->fetch_assoc();
     $userno=0;
+    $opponentScore = -$opponentScore;
     for($i=1;$i<=5;$i++){
-        if($row["game".$i]==(-$opponentScore)){
+        if($row["friend".$i]==($_SESSION["sno"])){
             $userno=$i;
         }
     }

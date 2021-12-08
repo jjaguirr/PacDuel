@@ -28,7 +28,7 @@
 <form  action="game_result.php" method="POST">
     <input type="text" id="score" name="score" value=0>
     <input type="text" id="opponent" name="opponent" value=<?php echo $_POST['opponent']?>>
-    <input type="text" id="friendnum" name="friendnum" class="nod" value="<?php echo $_POST['friendnum'];?>">
+    <input type="text" id="friendnum" name="friendnum" class="nod" value=<?php echo $_POST['friendnum'];?>>
     <button type="submit" id="result" class="btn login-btn">View Results</button> 
 </form>
 </div>

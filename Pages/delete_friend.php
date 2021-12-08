@@ -24,26 +24,30 @@
     
     $found=false;
     for($i=1;$i<=$numfriends1;$i++){
+        if($friend==intval($row["friend".$i])){
+            $found=true;
+        }
         if($found){
-            $removesql="UPDATE Friends SET friend".($i-1)."=? WHERE sno=?;";
-            $statement=$mysqli->prepare($removesql);
-            $statement->bind_param("ii",$row["friend".$i],$_SESSION['sno']);
-            $executed=$statement->execute();
-            if(!$executed){
-                echo "2";
+            if($i>1){
+                $removesql="UPDATE Friends SET friend".($i-1)."=? WHERE sno=?;";
+                $statement=$mysqli->prepare($removesql);
+                $statement->bind_param("ii",$row["friend".$i],$_SESSION['sno']);
+                $executed=$statement->execute();
+                if(!$executed){
+                    echo "2";
+                }
             }
             if($i==$numfriends1){
-            $removesql="UPDATE Friends SET friend".($i)."=NULL, numfriends=? WHERE sno=?;";
-            $statement=$mysqli->prepare($removesql);
-            $statement->bind_param("ii",($numfriends1-1),$_SESSION["sno"]);
+            $success=true;
+            $numfriends1=$numfriends1-1;
+            $sql="UPDATE Friends SET numfriends=?, friend".$i."=NULL WHERE sno=?;";
+            $statement=$mysqli->prepare($sql);
+            $statement->bind_param("ii",$numfriends1,$_SESSION["sno"]);
             $executed=$statement->execute();
             if(!$executed){
                 echo "3";
             }
             }
-        }
-        else if(intval($friend)==intval($row["friend".$i])){
-            $found=true;
         }
     }
         
@@ -57,29 +61,32 @@
     }
     $result=$statement->get_result();
     $row=$result->fetch_assoc();
-    $numfriends1=intval($row["numfriends"]);
+    $numfriends2=intval($row["numfriends"]);
     $found=false;
-    for($i=1;$i<=$numfriends1;$i++){
+    for($i=1;$i<=$numfriends2;$i++){
+        if($_SESSION['sno']==intval($row["friend".$i])){
+            $found=true;
+        }
         if($found){
-            $removesql="UPDATE Friends SET friend".($i-1)."=? WHERE sno=?;";
-            $statement=$mysqli->prepare($removesql);
-            $statement->bind_param("ii",$row["friend".$i],$friend);
-            $executed=$statement->execute();
-            if(!$executed){
-                echo "2";
+            if($i>1){
+                $removesql="UPDATE Friends SET friend".($i-1)."=? WHERE sno=?;";
+                $statement=$mysqli->prepare($removesql);
+                $statement->bind_param("ii",$row["friend".$i],$friend);
+                $executed=$statement->execute();
+                if(!$executed){
+                    echo "2";
+                }
             }
-            if($i==$numfriends1){
+            if($i==$numfriends2){
+            $numfriends2=$numfriends2-1;
             $removesql="UPDATE Friends SET friend".($i)."=NULL, numfriends=? WHERE sno=?;";
             $statement=$mysqli->prepare($removesql);
-            $statement->bind_param("ii",($numfriends1-1),$_SESSION["sno"]);
+            $statement->bind_param("ii",$numfriends2,$friend);
             $executed=$statement->execute();
             if(!$executed){
                 echo "3";
             }
             }
-        }
-        else if(intval($friend)==intval($row["friend".$i])){
-            $found=true;
         }
     }
     //delete games
