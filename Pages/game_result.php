@@ -148,7 +148,7 @@ else{
         <h1 class="login-header">You Lose.</h1>
     <?php endif;?>
     <div class="col text-center">
-                <a href="home.php" class="btn btn-primary" id="home-button">Leaderboard</a>
+                <a href="leaderboard.php" class="btn btn-primary" id="home-button">Leaderboard</a>
 				<a href="home.php" class="btn btn-primary" id="home-button">Home</a>
 		</div>
 					
