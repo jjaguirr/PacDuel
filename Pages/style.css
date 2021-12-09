@@ -142,3 +142,6 @@ font-family: 'PacFont', regular;
 	position:absolute;
 	bottom:0;
 }
+.headers{
+	text-align:left;
+}

@@ -22,10 +22,12 @@
     $row=$result->fetch_assoc();
     $numfriends1=intval($row["numfriends"]);
     
+    $index=0;
     $found=false;
     for($i=1;$i<=$numfriends1;$i++){
         if($friend==intval($row["friend".$i])){
             $found=true;
+            $index=$i;
         }
         if($found){
             if($i>1){
@@ -50,6 +52,8 @@
             }
         }
     }
+    $sql="UPDATE UserInfo SET game".$index."=0 WHERE sno=".$_SESSION["sno"];
+    $mysqli->query($sql);
         
     //remove from friend's list
     $sql2="SELECT * FROM Friends WHERE sno=?;";
@@ -66,6 +70,7 @@
     for($i=1;$i<=$numfriends2;$i++){
         if($_SESSION['sno']==intval($row["friend".$i])){
             $found=true;
+            $index=$i;
         }
         if($found){
             if($i>1){
@@ -89,9 +94,10 @@
             }
         }
     }
-    //delete games
 }
 
+$sql="UPDATE UserInfo SET game".$index."=0 WHERE sno=".$friend;
+$mysqli->query($sql);
     
 ?>
 <head>

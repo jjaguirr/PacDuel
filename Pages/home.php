@@ -75,10 +75,10 @@ $mysqli->close();
     <div class="row userrow">
     <img src="prof_pictures/<?php echo $row['profimage']; ?>.jpg" class="profpic">
     <h3 class="white"><?php echo $row['username']?></h3>
-    <form action="chat.php" method="POST" class="nobackground">
+    <!-- <form action="chat.php" method="POST" class="nobackground">
         <input type="hidden" name="friend" value="<?php echo $row['sno']?>">
         <button type="submit" class="nobackground"><i class="far fa-comment-alt white"></i></button>
-    </form>
+    </form>  this is the chat function we were going to implement-->
     <form action="play.php" method="POST">
     <input type="hidden" name="opponent" value="<?php echo $row['sno']?>">
     <input type="hidden" name="friendnum" value=<?php echo $friendnum;?>>
@@ -115,10 +115,10 @@ $mysqli->close();
     <div class="row userrow">
     <img src="prof_pictures/<?php echo $row['profimage']; ?>.jpg" class="profpic">
     <h3 class="white"><?php echo $row['username']?></h3>
-    <form action="chat.php" method="POST" class="nobackground">
+    <!-- <form action="chat.php" method="POST" class="nobackground">
         <input type="hidden" name="friend" value="<?php echo $row['sno']?>">
         <button type="submit" class="nobackground"><i class="far fa-comment-alt white"></i></button>
-    </form> 
+    </form>  this is the chat function we were going to implement-->
 
     <form action="delete_friend.php" method="POST" class="nobackground">
     <input type="hidden" name="friend" value="<?php echo $row['sno']?>">
